@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>¿Tu destino habla el idioma de tus visitantes? · Marina Traductora</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal: #1D9E75;
+    --teal-light: #E1F5EE;
+    --teal-mid: #5DCAA5;
+    --teal-dark: #0F6E56;
+    --teal-deep: #085041;
+    --amber: #EF9F27;
+    --amber-light: #FAEEDA;
+    --amber-dark: #854F0B;
+    --coral: #D85A30;
+    --coral-light: #FAECE7;
+    --coral-dark: #993C1D;
+    --ink: #1a1a18;
+    --ink-soft: #4a4a46;
+    --ink-muted: #8a8a84;
+    --surface: #faf9f6;
+    --surface-card: #ffffff;
+    --border: rgba(26,26,24,0.1);
+    --border-strong: rgba(26,26,24,0.2);
+    --serif: 'Playfair Display', Georgia, serif;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  body {
+    font-family: var(--sans);
+    background: var(--surface);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 560px;
+  }
+
+  /* Header */
+  .header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .brand {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal-dark);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .brand::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 1.5px;
+    background: var(--teal-dark);
+  }
+
+  .quiz-headline {
+    font-family: var(--serif);
+    font-size: clamp(26px, 5vw, 34px);
+    font-weight: 400;
+    line-height: 1.25;
+    color: var(--ink);
+    margin-bottom: 0.75rem;
+  }
+
+  .quiz-headline em {
+    font-style: italic;
+    color: var(--teal-dark);
+  }
+
+  .quiz-meta {
+    font-size: 13px;
+    color: var(--ink-muted);
+    font-weight: 300;
+    display: flex;
+    gap: 16px;
+  }
+
+  .quiz-meta span::before {
+    content: '· ';
+  }
+
+  .quiz-meta span:first-child::before { content: ''; }
+
+  /* Progress */
+  .progress-wrap {
+    margin-bottom: 2rem;
+  }
+
+  .progress-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+
+  .progress-track {
+    height: 2px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--teal);
+    border-radius: 99px;
+    transition: width 0.5s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* Question */
+  .q-num {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .q-text {
+    font-family: var(--serif);
+    font-size: clamp(17px, 3vw, 20px);
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+  }
+
+  /* Options */
+  .options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 2rem; }
+
+  .opt {
+    background: var(--surface-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    text-align: left;
+    width: 100%;
+    font-family: var(--sans);
+  }
+
+  .opt:hover {
+    border-color: var(--teal-mid);
+    background: #f5fdfb;
+    transform: translateX(2px);
+  }
+
+  .opt.selected {
+    border-color: var(--teal);
+    background: var(--teal-light);
+  }
+
+  .opt-letter {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1px solid var(--border-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink-muted);
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+
+  .opt.selected .opt-letter {
+    background: var(--teal);
+    border-color: var(--teal);
+    color: white;
+  }
+
+  .opt-text {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    font-weight: 300;
+  }
+
+  .opt.selected .opt-text {
+    color: var(--teal-deep);
+    font-weight: 400;
+  }
+
+  /* Nav */
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .btn-back {
+    font-size: 13px;
+    color: var(--ink-muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px 0;
+    font-family: var(--sans);
+    transition: color 0.15s;
+  }
+
+  .btn-back:hover { color: var(--ink); }
+  .btn-back[style*="hidden"] { visibility: hidden; }
+
+  .btn-next {
+    background: var(--teal);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: var(--sans);
+    transition: background 0.15s, opacity 0.15s, transform 0.1s;
+  }
+
+  .btn-next:hover:not(:disabled) {
+    background: var(--teal-dark);
+    transform: translateY(-1px);
+  }
+
+  .btn-next:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  /* Result */
+  .result { animation: fadeUp 0.5s ease both; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .result-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .result-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 1rem;
+  }
+
+  .badge-teal { background: var(--teal-light); color: var(--teal-dark); border: 1px solid var(--teal-mid); }
+  .badge-amber { background: var(--amber-light); color: var(--amber-dark); border: 1px solid #FAC775; }
+  .badge-coral { background: var(--coral-light); color: var(--coral-dark); border: 1px solid #F0997B; }
+
+  .result-title {
+    font-family: var(--serif);
+    font-size: clamp(22px, 4vw, 28px);
+    font-weight: 400;
+    line-height: 1.3;
+    color: var(--ink);
+    margin-bottom: 0.75rem;
+  }
+
+  .result-desc {
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.75;
+    color: var(--ink-soft);
+    margin-bottom: 1.75rem;
+    padding-bottom: 1.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Score bar */
+  .score-block {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .score-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+
+  .score-label { color: var(--ink-muted); font-weight: 300; }
+  .score-num { font-weight: 500; color: var(--ink); }
+
+  .score-track {
+    height: 4px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .score-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 1s cubic-bezier(.4,0,.2,1) 0.3s;
+  }
+
+  /* Services */
+  .services-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 10px;
+  }
+
+  .service-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    transition: border-color 0.15s;
+  }
+
+  .service-card.primary {
+    border-left: 3px solid var(--teal);
+    padding-left: 14px;
+  }
+
+  .service-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .service-desc {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--ink-muted);
+    line-height: 1.6;
+  }
+
+  /* Pills */
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.5rem; }
+
+  .pill {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 99px;
+    letter-spacing: 0.04em;
+  }
+
+  .pill-teal { background: var(--teal-light); color: var(--teal-dark); }
+  .pill-amber { background: var(--amber-light); color: var(--amber-dark); }
+  .pill-coral { background: var(--coral-light); color: var(--coral-dark); }
+
+  /* CTA */
+  .cta {
+    background: var(--ink);
+    color: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 1.75rem;
+  }
+
+  .cta-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal-mid);
+    margin-bottom: 0.75rem;
+  }
+
+  .cta-name {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 400;
+    color: white;
+    margin-bottom: 4px;
+  }
+
+  .cta-role {
+    font-size: 13px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 1rem;
+  }
+
+  .cta-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .cta-link {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--teal-mid);
+    text-decoration: none;
+    padding: 6px 14px;
+    border: 1px solid rgba(93,202,165,0.3);
+    border-radius: 6px;
+    transition: background 0.15s;
+  }
+
+  .cta-link:hover {
+    background: rgba(93,202,165,0.1);
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1.5rem 0;
+  }
+
+  .btn-restart {
+    background: none;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--ink-muted);
+    cursor: pointer;
+    font-family: var(--sans);
+    margin-top: 1rem;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .btn-restart:hover { color: var(--ink); border-color: var(--border-strong); }
+
+  @media (max-width: 480px) {
+    body { padding: 1.5rem 1rem 3rem; }
+    .cta-links { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- QUIZ SCREEN -->
+  <div id="quiz-screen">
+    <header class="header">
+      <p class="brand">Marina Traductora · Turismo &amp; Idiomas</p>
+      <h1 class="quiz-headline">¿Tu destino habla el idioma<br>de <em>tus visitantes</em>?</h1>
+      <div class="quiz-meta">
+        <span>5 preguntas</span>
+        <span>Diagnóstico gratuito</span>
+        <span>Menos de 2 minutos</span>
+      </div>
+    </header>
+
+    <div class="progress-wrap">
+      <div class="progress-top">
+        <span id="q-counter">Pregunta 1 de 5</span>
+        <span id="q-pct">20%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress" style="width: 20%"></div>
+      </div>
+    </div>
+
+    <p class="q-num" id="q-num">01</p>
+    <p class="q-text" id="q-text"></p>
+
+    <div class="options" id="options"></div>
+
+    <div class="nav">
+      <button class="btn-back" id="btn-back" onclick="goBack()">← Anterior</button>
+      <button class="btn-next" id="btn-next" onclick="goNext()" disabled>Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- RESULT SCREEN -->
+  <div id="result-screen" style="display:none"></div>
+
+</div>
+
+<script>
+const questions = [
+  {
+    text: "¿Recibís o esperás recibir visitantes que hablen inglés, portugués u otro idioma?",
+    options: [
+      { text: "Sí, ya tenemos visitantes extranjeros frecuentes", score: 3 },
+      { text: "Algunos, pero no son mayoría", score: 2 },
+      { text: "Todavía no, pero es nuestro objetivo", score: 2 },
+      { text: "No, nuestro público es 100% local", score: 0 }
+    ]
+  },
+  {
+    text: "¿Cómo está el contenido de tu sitio web o redes sociales en otros idiomas?",
+    options: [
+      { text: "Solo en español — necesitamos expandirnos", score: 3 },
+      { text: "Tenemos algo en inglés, pero lo escribió alguien del equipo", score: 2 },
+      { text: "Usamos Google Translate o herramientas automáticas", score: 2 },
+      { text: "Está profesionalmente traducido y actualizado", score: 0 }
+    ]
+  },
+  {
+    text: "¿Tenés materiales que deberían estar en otro idioma? (menús, folletos, tarifarios, mails de reserva, señalética)",
+    options: [
+      { text: "Sí, varios materiales — y ninguno está traducido", score: 3 },
+      { text: "Algunos sí, otros están a medias", score: 2 },
+      { text: "Solo uno o dos documentos clave", score: 1 },
+      { text: "Todo ya está traducido y actualizado", score: 0 }
+    ]
+  },
+  {
+    text: "Cuando describís tu experiencia (una cata, un circuito termal, un lodge), ¿qué tan importante es el tono y la emoción del texto?",
+    options: [
+      { text: "Crítico — vendemos una experiencia, no un servicio", score: 3 },
+      { text: "Bastante importante, es parte de nuestra marca", score: 2 },
+      { text: "Algo importante, pero lo técnico es prioridad", score: 1 },
+      { text: "No lo habíamos pensado", score: 1 }
+    ]
+  },
+  {
+    text: "¿Trabajás o planeás trabajar con plataformas internacionales (Booking, Airbnb, GetYourGuide) o tour operators extranjeros?",
+    options: [
+      { text: "Sí, ya trabajamos con alguna plataforma internacional", score: 3 },
+      { text: "Lo estamos evaluando para este año", score: 2 },
+      { text: "No por ahora, pero quizás en el futuro", score: 1 },
+      { text: "No es parte de nuestra estrategia", score: 0 }
+    ]
+  }
+];
+
+const letters = ['A','B','C','D'];
+let current = 0;
+let answers = [];
+let scores = [];
+
+function render() {
+  const q = questions[current];
+  const nums = ['01','02','03','04','05'];
+  document.getElementById('q-num').textContent = nums[current];
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('q-counter').textContent = 'Pregunta ' + (current+1) + ' de 5';
+  document.getElementById('q-pct').textContent = Math.round((current+1)/5*100) + '%';
+  document.getElementById('progress').style.width = ((current+1)/5*100) + '%';
+  document.getElementById('btn-back').style.visibility = current > 0 ? 'visible' : 'hidden';
+  const nextBtn = document.getElementById('btn-next');
+  nextBtn.disabled = answers[current] === undefined;
+  nextBtn.textContent = current === 4 ? 'Ver mi diagnóstico →' : 'Siguiente →';
+
+  const saved = answers[current];
+  let html = '';
+  q.options.forEach((opt, i) => {
+    const sel = saved === i ? 'selected' : '';
+    html += `<button class="opt ${sel}" onclick="select(${i})">
+      <span class="opt-letter">${letters[i]}</span>
+      <span class="opt-text">${opt.text}</span>
+    </button>`;
+  });
+  document.getElementById('options').innerHTML = html;
+}
+
+window.select = function(i) {
+  answers[current] = i;
+  scores[current] = questions[current].options[i].score;
+  render();
+};
+
+function goNext() {
+  if (answers[current] === undefined) return;
+  if (current < 4) { current++; render(); }
+  else showResult();
+}
+
+function goBack() {
+  if (current > 0) { current--; render(); }
+}
+
+function showResult() {
+  const total = scores.reduce((a,b) => a+b, 0);
+  const pct = Math.round(total / 15 * 100);
+
+  let cfg;
+  if (total <= 4) {
+    cfg = {
+      badge: 'Base sólida', badgeClass: 'badge-teal',
+      title: 'Tu comunicación ya tiene buena base',
+      desc: 'Tu operación tiene una base lingüística razonable. Aun así, una revisión profesional puede detectar matices que afectan la percepción de tu marca en mercados internacionales — pequeños ajustes de tono que marcan la diferencia.',
+      pills: [['Revisión profesional','teal'],['Consistencia de marca','teal']],
+      barColor: '#1D9E75',
+      services: [
+        { name: 'Revisión y auditoría de contenidos', desc: 'Revisamos lo que ya tenés para asegurar consistencia de tono y precisión terminológica.', primary: true },
+        { name: 'Traducción puntual', desc: 'Para materiales específicos o actualizaciones de contenido existente.', primary: false }
+      ]
+    };
+  } else if (total <= 9) {
+    cfg = {
+      badge: 'Oportunidad de crecimiento', badgeClass: 'badge-amber',
+      title: 'Necesitás traducción turística profesional',
+      desc: 'Tenés contenido en español y audiencia potencial internacional, pero la brecha lingüística puede estar frenando reservas y consultas. La traducción profesional — especializada en turismo, no genérica — es el primer paso.',
+      pills: [['Traducción especializada','amber'],['Adaptación cultural','teal'],['EN · PT','teal']],
+      barColor: '#EF9F27',
+      services: [
+        { name: 'Traducción turística especializada', desc: 'Web, folletos, menús, tarifarios y materiales de venta — adaptados al idioma y al mercado objetivo.', primary: true },
+        { name: 'Adaptación cultural', desc: 'Más que traducir palabras: ajustamos el tono, las referencias y la propuesta de valor para cada mercado.', primary: false }
+      ]
+    };
+  } else {
+    cfg = {
+      badge: 'Alto potencial internacional', badgeClass: 'badge-coral',
+      title: 'Tu experiencia necesita transcreación',
+      desc: 'Vendés una experiencia sensorial — una cata, un circuito termal, un lodge — donde las palabras crean deseo. La traducción literal no alcanza: necesitás que el texto en inglés o portugués genere la misma emoción que el original.',
+      pills: [['Transcreación','coral'],['Tono de marca','amber'],['Mercados internacionales','teal']],
+      barColor: '#D85A30',
+      services: [
+        { name: 'Transcreación de experiencias', desc: 'Reescribimos tu propuesta de valor para que funcione emocionalmente en el idioma del viajero.', primary: true },
+        { name: 'Adaptación cultural y tono de marca', desc: 'Tu voz de marca viaja con vos — coherente, auténtica y seductora en cada idioma.', primary: false },
+        { name: 'Estrategia de contenido multilingüe', desc: 'Para bodegas, complejos termales o tour operators que quieran posicionarse en plataformas internacionales.', primary: false }
+      ]
+    };
+  }
+
+  const pillsHTML = cfg.pills.map(([t,c]) => `<span class="pill pill-${c}">${t}</span>`).join('');
+  const servicesHTML = cfg.services.map(s =>
+    `<div class="service-card ${s.primary ? 'primary' : ''}">
+      <p class="service-name">${s.name}</p>
+      <p class="service-desc">${s.desc}</p>
+    </div>`
+  ).join('');
+
+  document.getElementById('result-screen').innerHTML = `
+    <div class="result">
+      <header class="header">
+        <p class="result-eyebrow">Tu diagnóstico lingüístico</p>
+        <span class="result-badge ${cfg.badgeClass}">${cfg.badge}</span>
+        <h2 class="result-title">${cfg.title}</h2>
+        <p class="result-desc">${cfg.desc}</p>
+      </header>
+
+      <div class="score-block">
+        <div class="score-row">
+          <span class="score-label">Urgencia de internacionalización</span>
+          <span class="score-num" id="pct-num">0%</span>
+        </div>
+        <div class="score-track">
+          <div class="score-fill" id="score-fill" style="width:0%; background:${cfg.barColor}"></div>
+        </div>
+      </div>
+
+      <div class="pills">${pillsHTML}</div>
+
+      <p class="services-label">Servicios recomendados para vos</p>
+      ${servicesHTML}
+
+      <div class="cta">
+        <p class="cta-eyebrow">¿Querés saber más?</p>
+        <p class="cta-name">Marina</p>
+        <p class="cta-role">Traductora literaria y turística · Especialista EN &amp; PT · Argentina</p>
+        <div class="cta-links">
+          <a href="mailto:tu@email.com" class="cta-link">tu@email.com</a>
+          <a href="https://instagram.com/tuusuario" class="cta-link">Instagram</a>
+          <a href="https://linkedin.com/in/tuusuario" class="cta-link">LinkedIn</a>
+        </div>
+      </div>
+
+      <button class="btn-restart" onclick="restart()">← Hacer el quiz de nuevo</button>
+    </div>
+  `;
+
+  document.getElementById('quiz-screen').style.display = 'none';
+  document.getElementById('result-screen').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  setTimeout(() => {
+    document.getElementById('score-fill').style.width = pct + '%';
+    document.getElementById('pct-num').textContent = pct + '%';
+  }, 150);
+}
+
+function restart() {
+  current = 0; answers = []; scores = [];
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
